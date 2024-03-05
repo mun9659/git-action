@@ -29,6 +29,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+bootJar {
+	archiveFileName = 'gitwebhook.jar'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
