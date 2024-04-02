@@ -16,4 +16,7 @@ public class HelloController {
         return "이것은 웹 훅 연습입니다.";
     }
 
+    @GetMapping("/action")
+    public String action() { return "CI/CD 연습 중입니다."; }
+
 }
