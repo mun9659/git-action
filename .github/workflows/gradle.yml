@@ -1,4 +1,4 @@
-# name: CI-build
+# name: CI-CD-build
 
 # Pull Request 후 Push 일 때만 작동
 on:
@@ -8,7 +8,7 @@ on:
     # branches: [ "main" ]
 
 jobs:
-  CI-build:
+  CI-CD-build:
 
     runs-on: ubuntu-latest
     permissions:
@@ -37,6 +37,18 @@ jobs:
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -f Dockerfile -t ${{ secrets.DOCKER_IMAGE_NAME }} .
           docker push ${{ secrets.DOCKER_IMAGE_NAME }}
+
+    # WAS 인스턴스 접속 & 애플리케이션 실행
+    - name: Connect to AWS & Execute Application
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.WAS_HOST }}
+        username: ${{ secrets.WAS_USER }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.WAS_PORT }}
+        script: |
+                docker-compose down --rmi all
+                docker-compose up -d
 
     
 
