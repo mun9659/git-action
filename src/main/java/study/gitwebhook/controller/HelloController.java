@@ -11,4 +11,9 @@ public class HelloController {
         return "hello webhook world";
     }
 
+    @GetMapping("/hello")
+    public String home2() {
+        return "이것은 웹 훅 연습입니다.";
+    }
+
 }
