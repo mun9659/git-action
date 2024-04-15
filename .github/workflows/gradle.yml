@@ -1,56 +1,58 @@
+# 2024-04-15 Git Action 주석화
+
 # name: CI-CD-build
 
 # Pull Request 후 Push 일 때만 작동
-on:
-  push:
-    branches: [ "main" ]
-  # pull_request:
-    # branches: [ "main" ]
+# on:
+#   push:
+#     branches: [ "main" ]
+#   # pull_request:
+#     # branches: [ "main" ]
 
-jobs:
-  CI-CD-build:
+# jobs:
+#   CI-CD-build:
 
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
+#     runs-on: ubuntu-latest
+#     permissions:
+#       contents: read
 
-    steps:
-    - name: Checkout
-      uses: actions/checkout@v4
+#     steps:
+#     - name: Checkout
+#       uses: actions/checkout@v4
 
-    # JDK 세팅
-    - name: Set up JDK 17
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
+#     # JDK 세팅
+#     - name: Set up JDK 17
+#       uses: actions/setup-java@v4
+#       with:
+#         java-version: '17'
+#         distribution: 'temurin'
 
-    # Gradle Build
-    - name: Build with Gradle Wrapper
-      run: |
-          chmod +x ./gradlew
-          ./gradlew clean build -x test
+#     # Gradle Build
+#     - name: Build with Gradle Wrapper
+#       run: |
+#           chmod +x ./gradlew
+#           ./gradlew clean build -x test
 
-    # DockerHub Build & Push
-    - name: Docker Login
-      run: |
-          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -f Dockerfile -t ${{ secrets.DOCKER_IMAGE_NAME }} .
-          docker push ${{ secrets.DOCKER_IMAGE_NAME }}
+#     # DockerHub Build & Push
+#     - name: Docker Login
+#       run: |
+#           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+#           docker build -f Dockerfile -t ${{ secrets.DOCKER_IMAGE_NAME }} .
+#           docker push ${{ secrets.DOCKER_IMAGE_NAME }}
 
-    # WAS 인스턴스 접속 & 애플리케이션 실행
-    - name: Connect to AWS & Execute Application
-      uses: appleboy/ssh-action@v1.0.3
-      with:
-        host: ${{ secrets.WAS_HOST }}
-        username: ${{ secrets.WAS_USER }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.WAS_PORT }}
-        script: |
-                docker stop $(docker ps -a -q) 
-                docker rm $(docker ps -a -q) 
-                docker pull ${{ secrets.DOCKER_IMAGE_NAME }}
-                docker run -d -p 8081:8080 --name "spring-boot" ${{ secrets.DOCKER_IMAGE_NAME }}
+#     # WAS 인스턴스 접속 & 애플리케이션 실행
+#     - name: Connect to AWS & Execute Application
+#       uses: appleboy/ssh-action@v1.0.3
+#       with:
+#         host: ${{ secrets.WAS_HOST }}
+#         username: ${{ secrets.WAS_USER }}
+#         key: ${{ secrets.SSH_PRIVATE_KEY }}
+#         port: ${{ secrets.WAS_PORT }}
+#         script: |
+#                 docker stop $(docker ps -a -q) 
+#                 docker rm $(docker ps -a -q) 
+#                 docker pull ${{ secrets.DOCKER_IMAGE_NAME }}
+#                 docker run -d -p 8081:8080 --name "spring-boot" ${{ secrets.DOCKER_IMAGE_NAME }}
 
     
 
